@@ -6,7 +6,8 @@ import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.spruce.scale.util.UnitConversion;
+
+import com.scientist.lib.util.UnitConversion;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
