@@ -12,7 +12,7 @@ import android.widget.TextView;
  * Email: zsq901021@sina.com
  * Date: 2018/9/6
  * Time: 16:44
- * Desc:
+ * Desc: MultiTypeViewHolder
  */
 public class MultiTypeViewHolder extends RecyclerView.ViewHolder{
     private SparseArray<View> mViews;

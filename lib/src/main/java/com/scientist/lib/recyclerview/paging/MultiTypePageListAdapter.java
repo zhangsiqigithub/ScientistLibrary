@@ -14,7 +14,6 @@ import com.scientist.lib.recyclerview.MultiTypeViewHolder;
 import com.scientist.lib.recyclerview.mvc.DataType;
 
 import java.util.HashMap;
-import java.util.concurrent.Executor;
 
 /**
  * Author: zhangsiqi
@@ -25,25 +24,23 @@ import java.util.concurrent.Executor;
  */
 public class MultiTypePageListAdapter extends PagedListAdapter<Different, MultiTypeViewHolder> {
 
-    private static DiffUtil.ItemCallback<Different> sDiffCallback = new DiffUtil.ItemCallback<Different>() {
-
-        @Override
-        public boolean areItemsTheSame(Different oldItem, Different newItem) {
-            return oldItem.getClass().getName().equals(newItem.getClass().getName())
-                    && oldItem.uniqueMark().equals(newItem.uniqueMark());
-        }
-
-        @Override
-        public boolean areContentsTheSame(Different oldItem, Different newItem) {
-            return oldItem.getClass().getName().equals(newItem.getClass().getName())
-                    && oldItem.contentUniqueMark().equals(newItem.contentUniqueMark());
-        }
-    };
-
     private HashMap<String/* class name */, DataType> mDataTypeMap = new HashMap<>();
 
     public MultiTypePageListAdapter() {
-        super(sDiffCallback);
+        super(new DiffUtil.ItemCallback<Different>() {
+
+            @Override
+            public boolean areItemsTheSame(Different oldItem, Different newItem) {
+                return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                        && oldItem.uniqueMark().equals(newItem.uniqueMark());
+            }
+
+            @Override
+            public boolean areContentsTheSame(Different oldItem, Different newItem) {
+                return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                        && oldItem.contentUniqueMark().equals(newItem.contentUniqueMark());
+            }
+        });
     }
 
     public void setDataTypes(DataType... dataTypes) {
