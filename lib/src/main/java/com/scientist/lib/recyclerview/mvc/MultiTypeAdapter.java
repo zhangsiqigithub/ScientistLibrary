@@ -1,13 +1,10 @@
 package com.scientist.lib.recyclerview.mvc;
 
-import android.content.Context;
-import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.scientist.lib.recyclerview.MultiTypeViewHolder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +17,7 @@ import java.util.List;
  * Desc: 多种数据类型的 RecyclerView.Adapter, 需要调用 setDataTypes(DataType... dataTypes) 方法
  *       设置每种方法的数据类型和绑定方式
  */
-public class MultiTypeAdapter extends RecyclerView.Adapter<MultiTypeAdapter.ViewHolder> {
+public class MultiTypeAdapter extends RecyclerView.Adapter<MultiTypeViewHolder> {
 
     private List<Object> mData;
     private RefreshHeader mRefreshHeader = new RefreshHeader();
@@ -43,13 +40,13 @@ public class MultiTypeAdapter extends RecyclerView.Adapter<MultiTypeAdapter.View
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false));
+    public MultiTypeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MultiTypeViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(MultiTypeViewHolder holder, int position) {
         Object data = mData.get(position);
         String dataClassName = data.getClass().getName();
         DataType dataType = mDataTypeMap.get(dataClassName);
@@ -78,51 +75,6 @@ public class MultiTypeAdapter extends RecyclerView.Adapter<MultiTypeAdapter.View
 
     public void setLoadMoreView(int layoutId) {
         mLoadMoreFooter.setLayoutId(layoutId);
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        private SparseArray<View> mViews;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mViews = new SparseArray<>();
-        }
-
-        public <T extends View> T getView(int id) {
-            View view = mViews.get(id);
-            if (view == null) {
-                view = itemView.findViewById(id);
-                mViews.put(id, view);
-            }
-            return (T) view;
-        }
-
-        public Context getContext() {
-            return itemView.getContext();
-        }
-
-        public ViewHolder setText(int id, CharSequence charSequence) {
-            TextView textView = getView(id);
-            textView.setText(charSequence);
-            return this;
-        }
-
-        public ViewHolder setText(int id, @StringRes int resId) {
-            TextView textView = getView(id);
-            textView.setText(resId);
-            return this;
-        }
-
-        public ViewHolder setVisibility(int id, int visibility) {
-            getView(id).setVisibility(visibility);
-            return this;
-        }
-
-        public ViewHolder setOnClickListener(int id, View.OnClickListener onClickListener) {
-            getView(id).setOnClickListener(onClickListener);
-            return this;
-        }
     }
 
     @Override

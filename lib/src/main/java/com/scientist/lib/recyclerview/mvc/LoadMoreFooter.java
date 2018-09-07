@@ -1,6 +1,7 @@
 package com.scientist.lib.recyclerview.mvc;
 
 
+import com.scientist.lib.recyclerview.MultiTypeViewHolder;
 import com.scientist.recyclerviewlib.R;
 
 /**
@@ -16,7 +17,7 @@ public class LoadMoreFooter extends DataType<LoadMoreFooter> {
     }
 
     @Override
-    public void onBindHolder(LoadMoreFooter loadMoreFooter, MultiTypeAdapter.ViewHolder viewHolder) {
+    public void onBindHolder(LoadMoreFooter loadMoreFooter, MultiTypeViewHolder viewHolder) {
 
     }
 

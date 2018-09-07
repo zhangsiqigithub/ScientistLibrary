@@ -1,6 +1,7 @@
 package com.scientist.lib.recyclerview.mvc;
 
 
+import com.scientist.lib.recyclerview.MultiTypeViewHolder;
 import com.scientist.recyclerviewlib.R;
 
 /**
@@ -17,7 +18,7 @@ public class RefreshHeader extends DataType<RefreshHeader>{
     }
 
     @Override
-    public void onBindHolder(RefreshHeader refreshHeader, MultiTypeAdapter.ViewHolder viewHolder) {
+    public void onBindHolder(RefreshHeader refreshHeader, MultiTypeViewHolder viewHolder) {
 
     }
 

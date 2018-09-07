@@ -1,5 +1,7 @@
 package com.scientist.lib.recyclerview.mvc;
 
+import com.scientist.lib.recyclerview.MultiTypeViewHolder;
+
 /**
  * Author: zhangsiqi
  * Email: zsq901021@sina.com
@@ -11,7 +13,7 @@ public abstract class DataType <T> {
     private String mTypeClassName;
     protected int mLayoutId;
 
-    public abstract void onBindHolder(T t, MultiTypeAdapter.ViewHolder viewHolder);
+    public abstract void onBindHolder(T t, MultiTypeViewHolder viewHolder);
 
     public DataType(Class<T> clazz, int layoutId) {
         mLayoutId = layoutId;
