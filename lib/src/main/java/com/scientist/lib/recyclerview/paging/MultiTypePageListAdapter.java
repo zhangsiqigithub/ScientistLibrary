@@ -31,13 +31,15 @@ public class MultiTypePageListAdapter extends PagedListAdapter<Different, MultiT
 
             @Override
             public boolean areItemsTheSame(Different oldItem, Different newItem) {
-                return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                return oldItem != null && newItem != null &&
+                        oldItem.getClass().getName().equals(newItem.getClass().getName())
                         && oldItem.uniqueMark().equals(newItem.uniqueMark());
             }
 
             @Override
             public boolean areContentsTheSame(Different oldItem, Different newItem) {
-                return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                return oldItem != null && newItem != null &&
+                        oldItem.getClass().getName().equals(newItem.getClass().getName())
                         && oldItem.contentUniqueMark().equals(newItem.contentUniqueMark());
             }
         });
