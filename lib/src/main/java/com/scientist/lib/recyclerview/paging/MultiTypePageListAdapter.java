@@ -25,24 +25,22 @@ import java.util.HashMap;
 public class MultiTypePageListAdapter extends PagedListAdapter<Different, MultiTypeViewHolder> {
 
     private HashMap<String/* class name */, DataType> mDataTypeMap = new HashMap<>();
+    private static DiffUtil.ItemCallback<Different> sDiffCallback = new DiffUtil.ItemCallback<Different>() {
+        @Override
+        public boolean areItemsTheSame(Different oldItem, Different newItem) {
+            return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                    && oldItem.uniqueMark().equals(newItem.uniqueMark());
+        }
+
+        @Override
+        public boolean areContentsTheSame(Different oldItem, Different newItem) {
+            return oldItem.getClass().getName().equals(newItem.getClass().getName())
+                    && oldItem.contentUniqueMark().equals(newItem.contentUniqueMark());
+        }
+    };
 
     public MultiTypePageListAdapter() {
-        super(new DiffUtil.ItemCallback<Different>() {
-
-            @Override
-            public boolean areItemsTheSame(Different oldItem, Different newItem) {
-                return oldItem != null && newItem != null &&
-                        oldItem.getClass().getName().equals(newItem.getClass().getName())
-                        && oldItem.uniqueMark().equals(newItem.uniqueMark());
-            }
-
-            @Override
-            public boolean areContentsTheSame(Different oldItem, Different newItem) {
-                return oldItem != null && newItem != null &&
-                        oldItem.getClass().getName().equals(newItem.getClass().getName())
-                        && oldItem.contentUniqueMark().equals(newItem.contentUniqueMark());
-            }
-        });
+        super(sDiffCallback);
     }
 
     public void setDataTypes(DataType... dataTypes) {
