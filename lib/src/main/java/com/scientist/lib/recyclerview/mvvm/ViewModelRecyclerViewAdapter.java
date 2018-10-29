@@ -3,6 +3,7 @@ package com.scientist.lib.recyclerview.mvvm;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
 import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ public class ViewModelRecyclerViewAdapter extends RecyclerView.Adapter<ViewModel
     public ViewModelRecyclerViewAdapter(ObservableArrayList<ItemViewModel> data) {
         mData = data;
     }
+    private FooterViewModel mFooterViewModel = new FooterViewModel();
 
     @Override
     public int getItemViewType(int position) {
@@ -48,6 +50,38 @@ public class ViewModelRecyclerViewAdapter extends RecyclerView.Adapter<ViewModel
     @Override
     public int getItemCount() {
         return mData.size();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        if (recyclerView instanceof com.scientist.lib.recyclerview.mvvm.RecyclerView) {
+            com.scientist.lib.recyclerview.mvvm.RecyclerView view = (com.scientist.lib.recyclerview.mvvm.RecyclerView) recyclerView;
+
+            view.setOnFooterViewSucceedStateListener(() -> mData.remove(mFooterViewModel));
+
+            view.setOnFooterViewLoadingStateListener(() -> {
+                if (mData.size() != 0 && !mData.contains(mFooterViewModel)) {
+                    mData.add(mFooterViewModel);
+                }
+                mFooterViewModel.setState(SimpleFooterView.STATE_LOADING);
+                view.scrollToPosition(getItemCount() - 1);
+            });
+
+            view.setOnFooterViewFailedStateListener(() -> {
+                if (mData.size() != 0 && !mData.contains(mFooterViewModel)) {
+                    mData.add(mFooterViewModel);
+                }
+                mFooterViewModel.setState(SimpleFooterView.STATE_FAILED);
+            });
+
+            view.setOnFooterViewNoMoreStateListener(() -> {
+                if (mData.size() != 0 && !mData.contains(mFooterViewModel)) {
+                    mData.add(mFooterViewModel);
+                }
+                mFooterViewModel.setState(SimpleFooterView.STATE_NO_MORE);
+            });
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
