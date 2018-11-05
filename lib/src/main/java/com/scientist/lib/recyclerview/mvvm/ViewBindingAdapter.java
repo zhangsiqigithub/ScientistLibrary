@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.LongSparseArray;
 
-import com.scientist.lib.recyclerview.mvvm.command.Action0;
 import com.scientist.lib.recyclerview.mvvm.command.ReplyCommand;
 
 import io.reactivex.Observable;
@@ -23,13 +22,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class ViewBindingAdapter {
 
     @BindingAdapter({"footerState"})
-    public static void setFooterState(com.scientist.lib.recyclerview.mvvm.RecyclerView recyclerView,
+    public static void setFooterState(LoadMoreRecyclerView recyclerView,
                                       @SimpleFooterView.State int state) {
         recyclerView.setFooterViewState(state);
     }
 
     @BindingAdapter({"loadMoreCommand"})
-    public static void setLoadMore(com.scientist.lib.recyclerview.mvvm.RecyclerView recyclerView,
+    public static void setLoadMore(LoadMoreRecyclerView recyclerView,
                                    ReplyCommand command) {
         recyclerView.setOnLoadMoreListener(command::execute);
     }

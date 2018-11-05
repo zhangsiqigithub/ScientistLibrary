@@ -2,6 +2,7 @@ package com.scientist.lib.recyclerview.mvvm;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -12,25 +13,37 @@ import android.view.View;
  * Time: 16:22
  * Desc:
  */
-public class RecyclerView extends android.support.v7.widget.RecyclerView {
+public class LoadMoreRecyclerView extends RecyclerView {
 
-    private OnLoadMoreListener mOnLoadMoreListener = () -> {};
+    private OnLoadMoreListener mOnLoadMoreListener = () -> {
+    };
 
-    private OnFooterViewSucceedStateListener mOnFooterViewSucceedStateListener = () -> {};
-    private OnFooterViewLoadingStateListener mOnFooterViewLoadingStateListener = () -> {};
-    private OnFooterViewFailedStateListener mOnFooterViewFailedStateListener = () -> {};
-    private OnFooterViewNoMoreStateListener mOnFooterViewNoMoreStateListener = () -> {};
+    private OnFooterViewSucceedStateListener mOnFooterViewSucceedStateListener = () -> {
+    };
+    private OnFooterViewLoadingStateListener mOnFooterViewLoadingStateListener = () -> {
+    };
+    private OnFooterViewFailedStateListener mOnFooterViewFailedStateListener = () -> {
+    };
+    private OnFooterViewNoMoreStateListener mOnFooterViewNoMoreStateListener = () -> {
+    };
 
     private LoadMoreScrollListener mLoadMoreScrollListener = new LoadMoreScrollListener();
+    private PullUpToLoadMoreListener mPullUpLoadMoreListener = new PullUpToLoadMoreListener();
     private @SimpleFooterView.State int mFooterViewState = SimpleFooterView.STATE_SUCCEED;
 
-    public RecyclerView(Context context) {
+    private boolean isPullToLoadMore = false;
+
+    public LoadMoreRecyclerView(Context context) {
         this(context, null);
     }
 
-    public RecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public LoadMoreRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        addOnScrollListener(mLoadMoreScrollListener);
+        if (isPullToLoadMore) {
+            addOnScrollListener(mPullUpLoadMoreListener);
+        } else {
+            addOnScrollListener(mLoadMoreScrollListener);
+        }
     }
 
     public interface OnLoadMoreListener {
@@ -92,7 +105,7 @@ public class RecyclerView extends android.support.v7.widget.RecyclerView {
         mOnFooterViewNoMoreStateListener = listener;
     }
 
-    private boolean isOverScreen(android.support.v7.widget.RecyclerView recyclerView) {
+    private boolean isOverScreen(RecyclerView recyclerView) {
         View firstChildView = recyclerView.getLayoutManager().getChildAt(0);
         if (firstChildView == null) return false;
 
@@ -109,7 +122,7 @@ public class RecyclerView extends android.support.v7.widget.RecyclerView {
         return firstPosition != 0 || firstChildTop < recyclerTop;
     }
 
-    private boolean isToEnd(android.support.v7.widget.RecyclerView recyclerView) {
+    private boolean isToEnd(RecyclerView recyclerView) {
         View lastChildView = recyclerView.getLayoutManager().getChildAt(recyclerView.getLayoutManager().getChildCount() - 1);
         if (lastChildView == null) return false;
 
@@ -121,7 +134,7 @@ public class RecyclerView extends android.support.v7.widget.RecyclerView {
         recyclerView.getLocationInWindow(recyclerViewPosition);
         int recyclerBottom = recyclerView.getHeight() + recyclerViewPosition[1] - recyclerView.getPaddingBottom();
 
-        int lastPosition  = recyclerView.getLayoutManager().getPosition(lastChildView);
+        int lastPosition = recyclerView.getLayoutManager().getPosition(lastChildView);
 
         return lastChildBottom == recyclerBottom && lastPosition == recyclerView.getLayoutManager().getItemCount() - 1;
 
@@ -129,13 +142,39 @@ public class RecyclerView extends android.support.v7.widget.RecyclerView {
 
     private class LoadMoreScrollListener extends OnScrollListener {
         @Override
-        public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if (newState == android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 boolean isEnd = isToEnd(recyclerView);
 
                 if (isOverScreen(recyclerView) && isEnd && mFooterViewState == SimpleFooterView.STATE_SUCCEED) {
                     mOnLoadMoreListener.onLoadMore();
+                }
+            }
+        }
+    }
+
+    private class PullUpToLoadMoreListener extends OnScrollListener {
+        @Override
+        public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == SCROLL_STATE_DRAGGING) {
+                if (!canScrollVertically(1)) {
+                    if (mFooterViewState == SimpleFooterView.STATE_SUCCEED || mFooterViewState == SimpleFooterView.STATE_FAILED) {
+                        mOnLoadMoreListener.onLoadMore();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onScrolled(android.support.v7.widget.RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy > 0 && getScrollState() == SCROLL_STATE_DRAGGING) {
+                if (!canScrollVertically(1)) {
+                    if (mFooterViewState == SimpleFooterView.STATE_SUCCEED || mFooterViewState == SimpleFooterView.STATE_FAILED) {
+                        mOnLoadMoreListener.onLoadMore();
+                    }
                 }
             }
         }

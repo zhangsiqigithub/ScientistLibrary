@@ -55,8 +55,8 @@ public class ViewModelRecyclerViewAdapter extends RecyclerView.Adapter<ViewModel
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        if (recyclerView instanceof com.scientist.lib.recyclerview.mvvm.RecyclerView) {
-            com.scientist.lib.recyclerview.mvvm.RecyclerView view = (com.scientist.lib.recyclerview.mvvm.RecyclerView) recyclerView;
+        if (recyclerView instanceof LoadMoreRecyclerView) {
+            LoadMoreRecyclerView view = (LoadMoreRecyclerView) recyclerView;
 
             view.setOnFooterViewSucceedStateListener(() -> mData.remove(mFooterViewModel));
 
