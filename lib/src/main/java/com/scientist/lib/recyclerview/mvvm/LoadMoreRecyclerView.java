@@ -27,11 +27,7 @@ public class LoadMoreRecyclerView extends RecyclerView {
     private OnFooterViewNoMoreStateListener mOnFooterViewNoMoreStateListener = () -> {
     };
 
-    private LoadMoreScrollListener mLoadMoreScrollListener = new LoadMoreScrollListener();
-    private PullUpToLoadMoreListener mPullUpLoadMoreListener = new PullUpToLoadMoreListener();
     private @SimpleFooterView.State int mFooterViewState = SimpleFooterView.STATE_SUCCEED;
-
-    private boolean isPullToLoadMore = false;
 
     public LoadMoreRecyclerView(Context context) {
         this(context, null);
@@ -39,11 +35,7 @@ public class LoadMoreRecyclerView extends RecyclerView {
 
     public LoadMoreRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        if (isPullToLoadMore) {
-            addOnScrollListener(mPullUpLoadMoreListener);
-        } else {
-            addOnScrollListener(mLoadMoreScrollListener);
-        }
+        addOnScrollListener(new PullUpToLoadMoreListener());
     }
 
     public interface OnLoadMoreListener {

@@ -36,9 +36,11 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration{
 
     private int mSpaceValue;
     private Set<Integer> mDirectionsSet;
+
     public SpaceItemDecoration(Context context, int spaceValueInDp) {
-        this(context, spaceValueInDp, BOTTOM);
+        this(context, spaceValueInDp, LEFT, RIGHT, TOP, BOTTOM);
     }
+
     public SpaceItemDecoration(Context context, int spaceValueInDp, @Direction Integer... directions) {
         mSpaceValue = UnitConversion.dp2px(context, spaceValueInDp);
         mDirectionsSet = new HashSet<>(Arrays.asList(directions));
@@ -52,7 +54,9 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration{
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
-        outRect.bottom = mSpaceValue;
+        if (mDirectionsSet.contains(BOTTOM)) {
+            outRect.bottom = mSpaceValue;
+        }
         if (mDirectionsSet.contains(LEFT)) {
             outRect.left = mSpaceValue;
         }
