@@ -33,9 +33,9 @@ public class ViewBindingAdapter {
         recyclerView.setOnLoadMoreListener(command::execute);
     }
 
-    @BindingAdapter(value = {"data"}, requireAll = false)
+    @BindingAdapter(value = {"data", "animate"}, requireAll = false)
     public static void setRecyclerViewData(RecyclerView recyclerView,
-                                           ObservableArrayList<ItemViewModel> viewModels) {
+                                           ObservableArrayList<ItemViewModel> viewModels, boolean animate) {
 
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter == null) {
@@ -43,7 +43,10 @@ public class ViewBindingAdapter {
             recyclerView.setAdapter(adapter);
         }
 
-        viewModels.addOnListChangedCallback(new ListChangedListener(adapter));
+        if (animate)
+            viewModels.addOnListChangedCallback(new AnimateListChangedListener(adapter));
+        else
+            viewModels.addOnListChangedCallback(new ListChangedListener(adapter));
     }
 
     private static class ListChangedListener extends ObservableList.OnListChangedCallback<ObservableArrayList<ItemViewModel>> {
@@ -52,6 +55,123 @@ public class ViewBindingAdapter {
         private LongSparseArray<Boolean> blockingArray = new LongSparseArray<>();
 
         ListChangedListener(RecyclerView.Adapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public void onChanged(ObservableArrayList<ItemViewModel> sender) {
+            long threadId = Thread.currentThread().getId();
+            long mainThreadId = Looper.getMainLooper().getThread().getId();
+
+            if (threadId == mainThreadId) {
+                adapter.notifyDataSetChanged();
+            } else {
+                blockingArray.put(threadId, true);
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> blockingArray.put(threadId, false))
+                        .subscribe(integer -> adapter.notifyDataSetChanged());
+
+                while (blockingArray.get(threadId)) {
+                    // loop
+                }
+            }
+        }
+
+        @Override
+        public void onItemRangeChanged(ObservableArrayList<ItemViewModel> sender,
+                                       int positionStart,
+                                       int itemCount) {
+            long threadId = Thread.currentThread().getId();
+            long mainThreadId = Looper.getMainLooper().getThread().getId();
+
+            if (threadId == mainThreadId) {
+                adapter.notifyDataSetChanged();
+            } else {
+                blockingArray.put(threadId, true);
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> blockingArray.put(threadId, false))
+                        .subscribe(integer -> adapter.notifyDataSetChanged());
+
+                while (blockingArray.get(threadId)) {
+                    // loop
+                }
+            }
+        }
+
+        @Override
+        public void onItemRangeInserted(ObservableArrayList<ItemViewModel> sender,
+                                        int positionStart,
+                                        int itemCount) {
+            long threadId = Thread.currentThread().getId();
+            long mainThreadId = Looper.getMainLooper().getThread().getId();
+
+            if (threadId == mainThreadId) {
+                adapter.notifyDataSetChanged();
+            } else {
+                blockingArray.put(threadId, true);
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> blockingArray.put(threadId, false))
+                        .subscribe(integer -> adapter.notifyDataSetChanged());
+
+                while (blockingArray.get(threadId)) {
+                    // loop
+                }
+            }
+        }
+
+        @Override
+        public void onItemRangeMoved(ObservableArrayList<ItemViewModel> sender,
+                                     int fromPosition,
+                                     int toPosition,
+                                     int itemCount) {
+            long threadId = Thread.currentThread().getId();
+            long mainThreadId = Looper.getMainLooper().getThread().getId();
+
+            if (threadId == mainThreadId) {
+                adapter.notifyDataSetChanged();
+            } else {
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> blockingArray.put(threadId, false))
+                        .subscribe(integer -> adapter.notifyDataSetChanged());
+
+                while (blockingArray.get(threadId)) {
+                    // loop
+                }
+            }
+        }
+
+        @Override
+        public void onItemRangeRemoved(ObservableArrayList<ItemViewModel> sender,
+                                       int positionStart,
+                                       int itemCount) {
+            long threadId = Thread.currentThread().getId();
+            long mainThreadId = Looper.getMainLooper().getThread().getId();
+
+            if (threadId == mainThreadId) {
+                adapter.notifyDataSetChanged();
+            } else {
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> blockingArray.put(threadId, false))
+                        .subscribe(integer -> adapter.notifyDataSetChanged());
+
+                while (blockingArray.get(threadId)) {
+                    // loop
+                }
+            }
+        }
+    }
+
+    private static class AnimateListChangedListener extends ObservableList.OnListChangedCallback<ObservableArrayList<ItemViewModel>> {
+
+        private RecyclerView.Adapter adapter;
+        private LongSparseArray<Boolean> blockingArray = new LongSparseArray<>();
+
+        AnimateListChangedListener(RecyclerView.Adapter adapter) {
             this.adapter = adapter;
         }
 
